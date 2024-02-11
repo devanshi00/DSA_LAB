@@ -65,7 +65,7 @@ int main() {
    
     MergeSort(a, 0, N1 - 1);
 
-    cout << "INVERSION COUNT: "<<ct << endl;
+    cout <<ct << endl;
     
 }
 }

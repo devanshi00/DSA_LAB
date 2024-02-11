@@ -20,8 +20,7 @@ void matrix_free(int **matrix, int row) {
     }
     delete[] matrix;
 }
-
-void matrix_print_to_file(const char *str, int **a, int row, ofstream &outputFile) {
+void matrix_print(const char *str, int **a, int row) {
     int min, max, w = 0, n1, n2, nw;
     min = max = a[0][0];
     for (int i = 0; i < row; i++) {
@@ -38,17 +37,18 @@ void matrix_print_to_file(const char *str, int **a, int row, ofstream &outputFil
 
     for (int i = 0; i < row; i++) {
         if (i == 0)
-            outputFile << str << " = ";
+            w = printf("%s = ", str);
         else
-            outputFile << setw(w) << "";
+            printf("%*s", w, "");
 
         for (int j = 0; j < row; j++) {
-            outputFile << " " << setw(nw) << a[i][j];
+            printf(" %*d", nw, a[i][j]);
         }
-        outputFile << endl;
+        printf("\n");
     }
-    outputFile << flush;
+    fflush(stdout);
 }
+
 
 
 int **matrix_add(int **a, int **b, int row, int deallocate) {
@@ -123,53 +123,96 @@ int **matrix_multiply(int **A, int **B, int row, int deallocate) {
 
     return C;
 }
-
-
 int main() {
     freopen("test_cases_Q1_matrix.txt", "r", stdin); 
-    ofstream outputFile("output_Q1_matrix.txt");  // Open the output file
-
+    // freopen("output_Q1.txt","w",stdout);
     int t;
     cin >> t;
 
     while (t--) {
 
-        int n;
-        cin >> n;
+    int n;
+    cin >> n;
 
-        int **A = matrix_allocate(n, n);
-        int **B = matrix_allocate(n, n);
+    int **A = matrix_allocate(n, n);
+    int **B = matrix_allocate(n, n);
 
-        // Read matrix A
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                cin >> A[i][j];
+    // Read matrix A
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> A[i][j];
 
-        // Read matrix B
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                cin >> B[i][j];
+    // Read matrix B
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> B[i][j];
 
-        fclose(stdin);  // Close the file redirection
+    fclose(stdin);  // Close the file redirection
 
-        matrix_print_to_file("A", A, n, outputFile);
-        matrix_print_to_file("B", B, n, outputFile);
+    matrix_print("A", A, n);
+    matrix_print("B", B, n);
 
-        if ((n & (n - 1)) == 0) {
-            /* recursive method can be applied only to powers of 2 */
-            clock_t ticks = -clock();
-            int **C = matrix_multiply(A, B, n, 0);
-            ticks += clock();
-            matrix_print_to_file("C = A * B", C, n, outputFile);
-            outputFile << ticks << " ticks" << endl;
-            matrix_free(C, n);
-        }
-
-        matrix_free(A, n);
-        matrix_free(B, n);
+    if ((n & (n - 1)) == 0) {
+        /* recursive method can be applied only to powers of 2 */
+        clock_t ticks = -clock();
+        int **C = matrix_multiply(A, B, n, 0);
+        ticks += clock();
+        matrix_print("C = A * B", C, n);
+        cout << ticks << " ticks" << endl;
+        matrix_free(C, n);
     }
 
-    outputFile.close();  // Close the output file
+    matrix_free(A, n);
+    matrix_free(B, n);
 
     return 0;
-}
+}}
+
+// int main() {
+//     freopen("test_cases_Q1_matrix.txt", "r", stdin); 
+//     ofstream outputFile("output_Q1_matrix.txt");  // Open the output file
+
+//     int t;
+//     cin >> t;
+
+//     while (t--) {
+
+//         int n;
+//         cin >> n;
+
+//         int **A = matrix_allocate(n, n);
+//         int **B = matrix_allocate(n, n);
+
+//         // Read matrix A
+//         for (int i = 0; i < n; i++)
+//             for (int j = 0; j < n; j++)
+//                 cin >> A[i][j];
+
+//         // Read matrix B
+//         for (int i = 0; i < n; i++)
+//             for (int j = 0; j < n; j++)
+//                 cin >> B[i][j];
+
+//         fclose(stdin);  // Close the file redirection
+
+//         matrix_print_to_file("A", A, n, outputFile);
+//         matrix_print_to_file("B", B, n, outputFile);
+
+//         if ((n & (n - 1)) == 0) {
+//             /* recursive method can be applied only to powers of 2 */
+//             clock_t ticks = -clock();
+//             int **C = matrix_multiply(A, B, n, 0);
+//             ticks += clock();
+//             matrix_print_to_file("C = A * B", C, n, outputFile);
+//             outputFile << ticks << " ticks" << endl;
+//             matrix_free(C, n);
+//         }
+
+//         matrix_free(A, n);
+//         matrix_free(B, n);
+//     }
+
+//     outputFile.close();  // Close the output file
+
+//     return 0;
+// }
